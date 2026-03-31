@@ -8,71 +8,26 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
-    body {
-      font-family: 'Syne', sans-serif;
-      background: #090c14;
-      min-height: 100vh;
-      color: #e2e8f0;
-    }
+    body { font-family: 'Syne', sans-serif; background: #090c14; min-height: 100vh; color: #e2e8f0; }
     .grid-bg {
-      background-image:
-        linear-gradient(rgba(74,222,128,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(74,222,128,0.03) 1px, transparent 1px);
+      background-image: linear-gradient(rgba(74,222,128,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(74,222,128,0.03) 1px, transparent 1px);
       background-size: 40px 40px;
     }
-    .card {
-      background: #0d1117;
-      border: 1px solid #1e293b;
-      border-radius: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-    .scanline {
-      position: absolute; inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-      pointer-events: none;
-    }
-    .wave-bar {
-      width: 3px; border-radius: 2px;
-      background: #f59e0b;
-      animation: wave 0.8s ease-in-out infinite alternate;
-      height: 8px;
-      display: inline-block;
-    }
-    @keyframes wave {
-      0%   { height: 4px;  opacity: 0.4; }
-      100% { height: 28px; opacity: 1; }
-    }
-    .mic-btn {
-      width: 72px; height: 72px; border-radius: 50%;
-      border: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem; position: relative;
-      transition: transform 0.15s;
-    }
+    .card { background: #0d1117; border: 1px solid #1e293b; border-radius: 16px; position: relative; overflow: hidden; }
+    .scanline { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); pointer-events: none; }
+    .wave-bar { width: 3px; border-radius: 2px; background: #f59e0b; animation: wave 0.8s ease-in-out infinite alternate; height: 8px; display: inline-block; }
+    @keyframes wave { 0% { height: 4px; opacity: 0.4; } 100% { height: 28px; opacity: 1; } }
+    .mic-btn { width: 72px; height: 72px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; position: relative; transition: transform 0.15s; }
     .mic-btn:hover { transform: scale(1.05); }
-    .mic-ring {
-      position: absolute; inset: -6px; border-radius: 50%;
-      border: 2px solid rgba(245,158,11,0.5);
-      animation: ping 1s cubic-bezier(0,0,0.2,1) infinite;
-    }
+    .mic-ring { position: absolute; inset: -6px; border-radius: 50%; border: 2px solid rgba(245,158,11,0.5); animation: ping 1s cubic-bezier(0,0,0.2,1) infinite; }
     @keyframes ping { 75%,100% { transform: scale(1.4); opacity: 0; } }
     .answer-text { font-family: 'Space Mono', monospace; line-height: 1.85; }
-    .upload-zone {
-      border: 1.5px dashed #1e293b; border-radius: 12px;
-      padding: 20px; text-align: center; cursor: pointer;
-      transition: all 0.2s; display: block;
-    }
+    .upload-zone { border: 1.5px dashed #1e293b; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; display: block; }
     .upload-zone:hover { border-color: #4ade80; background: rgba(74,222,128,0.04); }
     .glow-green { box-shadow: 0 0 20px rgba(74,222,128,0.15), 0 0 60px rgba(74,222,128,0.05); }
     .glow-amber { box-shadow: 0 0 20px rgba(245,158,11,0.25), 0 0 60px rgba(245,158,11,0.1); }
     .glow-blue  { box-shadow: 0 0 20px rgba(96,165,250,0.2),  0 0 60px rgba(96,165,250,0.08); }
-    #manual-q {
-      background: #0d1117; border: 1px solid #1e293b; border-radius: 10px;
-      color: #e2e8f0; font-family: 'Syne', sans-serif;
-      font-size: 14px; padding: 10px 14px; outline: none;
-      transition: border-color 0.2s; width: 100%;
-    }
+    #manual-q { background: #0d1117; border: 1px solid #1e293b; border-radius: 10px; color: #e2e8f0; font-family: 'Syne', sans-serif; font-size: 14px; padding: 10px 14px; outline: none; transition: border-color 0.2s; width: 100%; }
     #manual-q:focus { border-color: #4ade80; }
   </style>
 </head>
@@ -128,9 +83,7 @@
             <div class="mic-ring hidden" id="mic-ring"></div>
             <button class="mic-btn" id="mic-btn" style="background:linear-gradient(135deg,#4ade80,#22d3ee)">🎙</button>
           </div>
-          <div class="flex items-center gap-[3px] h-8" id="waveform">
-            <!-- bars injected by JS -->
-          </div>
+          <div class="flex items-center gap-[3px] h-8" id="waveform"></div>
           <p class="text-xs text-slate-500 font-mono text-center" id="mic-hint">Click mic to start listening</p>
           <div class="w-full p-3 rounded-xl text-sm font-mono hidden" id="transcript-box" style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.15);color:#fcd34d">
             <span style="color:#b45309">Q: </span><span id="transcript-text"></span>
@@ -138,10 +91,10 @@
         </div>
 
         <!-- Manual input -->
-        <form id="manual-form" class="flex gap-2">
+        <div class="flex gap-2">
           <input type="text" id="manual-q" placeholder="Or type a question manually..." />
-          <button type="submit" id="ask-btn" class="px-4 py-2 rounded-xl text-sm font-bold text-black transition-all" style="background:linear-gradient(135deg,#4ade80,#22d3ee);white-space:nowrap">Ask →</button>
-        </form>
+          <button id="ask-btn" onclick="handleManual()" class="px-4 py-2 rounded-xl text-sm font-bold text-black transition-all" style="background:linear-gradient(135deg,#4ade80,#22d3ee);white-space:nowrap">Ask →</button>
+        </div>
 
         <!-- Error -->
         <div class="p-3 rounded-xl text-sm font-mono hidden" id="error-box" style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);color:#f87171"></div>
@@ -164,7 +117,7 @@
           <div class="scanline"></div>
           <div class="flex items-center justify-between mb-4">
             <p class="text-xs font-mono text-slate-500 uppercase tracking-widest">Answer</p>
-            <button id="copy-btn" class="text-xs font-mono text-slate-500 hover:text-green-400 transition-colors">copy ⧉</button>
+            <button id="copy-btn" onclick="copyAnswer()" class="text-xs font-mono text-slate-500 hover:text-green-400 transition-colors">copy ⧉</button>
           </div>
           <p class="answer-text text-sm leading-relaxed" id="answer-text" style="color:#e2e8f0"></p>
         </div>
@@ -178,226 +131,208 @@
         </div>
       </div>
     </div>
-
     <p class="text-center text-xs text-slate-700 font-mono mt-8">powered by claude · web speech api · express backend</p>
   </div>
 
-  <script>
-    // ── State ──────────────────────────────────
-    let resume = "", resumeName = "", isListening = false;
-    let silenceTimer = null, recognition = null;
-    let currentQuestion = "", history = [];
+<script>
+  let resume = "", isListening = false;
+  let silenceTimer = null, recognition = null;
+  let currentQuestion = "", history = [];
 
-    // ── Waveform bars ──────────────────────────
-    const waveform = document.getElementById("waveform");
-    for (let i = 0; i < 16; i++) {
-      const bar = document.createElement("div");
-      bar.className = "wave-bar";
-      bar.style.animationDelay = `${i * 0.07}s`;
-      bar.style.animationPlayState = "paused";
-      bar.style.opacity = "0.3";
-      waveform.appendChild(bar);
-    }
-    const setWave = (on) => {
-      waveform.querySelectorAll(".wave-bar").forEach(b => {
-        b.style.animationPlayState = on ? "running" : "paused";
-        b.style.opacity = on ? "1" : "0.3";
-      });
-    };
+  // Waveform
+  const waveform = document.getElementById("waveform");
+  for (let i = 0; i < 16; i++) {
+    const bar = document.createElement("div");
+    bar.className = "wave-bar";
+    bar.style.animationDelay = `${i * 0.07}s`;
+    bar.style.animationPlayState = "paused";
+    bar.style.opacity = "0.3";
+    waveform.appendChild(bar);
+  }
+  const setWave = (on) => waveform.querySelectorAll(".wave-bar").forEach(b => {
+    b.style.animationPlayState = on ? "running" : "paused";
+    b.style.opacity = on ? "1" : "0.3";
+  });
 
-    // ── Status ─────────────────────────────────
-    const STATUSES = {
-      idle:      { label: "Ready",        color: "#4ade80", icon: "◉" },
-      listening: { label: "Listening",    color: "#f59e0b", icon: "◎" },
-      thinking:  { label: "Thinking",     color: "#60a5fa", icon: "◌" },
-      done:      { label: "Answer Ready", color: "#a78bfa", icon: "◍" },
-      error:     { label: "Error",        color: "#f87171", icon: "◈" },
-    };
-    const setStatus = (key) => {
-      const s = STATUSES[key] || STATUSES.idle;
-      document.getElementById("status-badge").style.background = `${s.color}15`;
-      document.getElementById("status-badge").style.border = `1px solid ${s.color}40`;
-      document.getElementById("status-icon").textContent = s.icon;
-      document.getElementById("status-icon").style.color = s.color;
-      document.getElementById("status-label").textContent = s.label;
-      document.getElementById("status-label").style.color = s.color;
-    };
+  // Status
+  const STATUSES = {
+    idle:      { label:"Ready",        color:"#4ade80", icon:"◉" },
+    listening: { label:"Listening",    color:"#f59e0b", icon:"◎" },
+    thinking:  { label:"Thinking",     color:"#60a5fa", icon:"◌" },
+    done:      { label:"Answer Ready", color:"#a78bfa", icon:"◍" },
+    error:     { label:"Error",        color:"#f87171", icon:"◈" },
+  };
+  const setStatus = (key) => {
+    const s = STATUSES[key] || STATUSES.idle;
+    const badge = document.getElementById("status-badge");
+    badge.style.background = `${s.color}15`;
+    badge.style.border = `1px solid ${s.color}40`;
+    document.getElementById("status-icon").textContent = s.icon;
+    document.getElementById("status-icon").style.color = s.color;
+    document.getElementById("status-label").textContent = s.label;
+    document.getElementById("status-label").style.color = s.color;
+  };
 
-    // ── Resume upload ──────────────────────────
-    document.getElementById("resume-input").addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      if (!file.name.endsWith(".txt")) { showError("Only .txt files supported."); return; }
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        resume = ev.target.result;
-        resumeName = file.name;
-        document.getElementById("upload-placeholder").innerHTML = `
-          <div class="text-2xl mb-1">📄</div>
-          <p class="text-xs truncate" style="color:#4ade80">${resumeName}</p>
-          <p class="text-xs text-slate-500 mt-1">${resume.length} chars loaded</p>`;
-        document.getElementById("remove-resume").classList.remove("hidden");
-      };
-      reader.readAsText(file);
-    });
-    document.getElementById("remove-resume").addEventListener("click", () => {
-      resume = ""; resumeName = "";
+  // Resume upload
+  document.getElementById("resume-input").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.name.endsWith(".txt")) { showError("Only .txt files supported."); return; }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      resume = ev.target.result;
       document.getElementById("upload-placeholder").innerHTML = `
-        <div class="text-2xl mb-2">⬆️</div>
-        <p class="text-sm text-slate-400">Upload <span style="color:#4ade80">.txt</span> resume</p>
-        <p class="text-xs text-slate-600 mt-1">for personalized answers</p>`;
-      document.getElementById("remove-resume").classList.add("hidden");
-    });
-
-    // ── Speech Recognition ─────────────────────
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = "en-US";
-
-      recognition.onresult = (e) => {
-        let interim = "", final = "";
-        for (let i = e.resultIndex; i < e.results.length; i++) {
-          const t = e.results[i][0].transcript;
-          if (e.results[i].isFinal) final += t; else interim += t;
-        }
-        const text = final || interim;
-        showTranscript(text);
-        if (final) {
-          currentQuestion = final;
-          clearTimeout(silenceTimer);
-          silenceTimer = setTimeout(() => recognition.stop(), 1200);
-        }
-      };
-
-      recognition.onend = () => {
-        stopMic();
-        if (currentQuestion) triggerAnswer(currentQuestion);
-      };
-
-      recognition.onerror = (e) => {
-        stopMic();
-        showError(e.error === "not-allowed" ? "Microphone access denied." : `Speech error: ${e.error}`);
-        setStatus("error");
-      };
-    }
-
-    // ── Mic button ─────────────────────────────
-    document.getElementById("mic-btn").addEventListener("click", () => {
-      if (!recognition) { showError("Speech recognition not supported. Use Chrome."); return; }
-      if (isListening) {
-        recognition.stop();
-      } else {
-        currentQuestion = "";
-        document.getElementById("transcript-box").classList.add("hidden");
-        hideAnswer(); hideError();
-        setStatus("listening");
-        isListening = true;
-        setWave(true);
-        document.getElementById("mic-btn").textContent = "⏹";
-        document.getElementById("mic-btn").style.background = "linear-gradient(135deg,#f59e0b,#ef4444)";
-        document.getElementById("mic-ring").classList.remove("hidden");
-        document.getElementById("mic-hint").textContent = "Speak your question... pauses auto-trigger";
-        recognition.start();
-      }
-    });
-
-    function stopMic() {
-      isListening = false;
-      setWave(false);
-      document.getElementById("mic-btn").textContent = "🎙";
-      document.getElementById("mic-btn").style.background = "linear-gradient(135deg,#4ade80,#22d3ee)";
-      document.getElementById("mic-ring").classList.add("hidden");
-      document.getElementById("mic-hint").textContent = "Click mic to start listening";
-    }
-
-    // ── Trigger answer ─────────────────────────
-    async function triggerAnswer(question) {
-      if (!question.trim()) return;
-      hideError();
-      setStatus("thinking");
-      hideAnswer();
-      document.getElementById("thinking-box").classList.remove("hidden");
-      document.getElementById("empty-state").classList.add("hidden");
-
-      try {
-        const res = await fetch("/get-answer", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question, resume }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Server error");
-
-        document.getElementById("thinking-box").classList.add("hidden");
-        document.getElementById("answer-text").textContent = data.answer;
-        document.getElementById("answer-box").classList.remove("hidden");
-        document.getElementById("answer-box").scrollIntoView({ behavior: "smooth", block: "nearest" });
-        setStatus("done");
-
-        // Save history
-        history.unshift({ question, answer: data.answer });
-        if (history.length > 10) history.pop();
-        renderHistory();
-      } catch (err) {
-        document.getElementById("thinking-box").classList.add("hidden");
-        showError(err.message);
-        setStatus("error");
-      }
-    }
-
-    // ── Manual form ────────────────────────────
-    document.getElementById("manual-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const q = document.getElementById("manual-q").value.trim();
-      if (q) triggerAnswer(q);
-    });
-
-    // ── Copy ───────────────────────────────────
-    document.getElementById("copy-btn").addEventListener("click", () => {
-      navigator.clipboard.writeText(document.getElementById("answer-text").textContent);
-    });
-
-    // ── History ────────────────────────────────
-    function renderHistory() {
-      const panel = document.getElementById("history-panel");
-      const list  = document.getElementById("history-list");
-      if (!history.length) { panel.classList.add("hidden"); return; }
-      panel.classList.remove("hidden");
-      list.innerHTML = history.map((h, i) => `
-        <div onclick="loadHistory(${i})" style="border-left:2px solid #1e293b;padding-left:12px;cursor:pointer;transition:border-color 0.2s"
-          onmouseover="this.style.borderLeftColor='#4ade80'" onmouseout="this.style.borderLeftColor='#1e293b'">
-          <p class="text-xs text-slate-400 truncate">${h.question}</p>
-          <p class="text-xs text-slate-600 truncate mt-0.5">${h.answer}</p>
-        </div>`).join("");
-    }
-    window.loadHistory = (i) => {
-      const h = history[i];
-      document.getElementById("manual-q").value = h.question;
-      document.getElementById("answer-text").textContent = h.answer;
-      showTranscript(h.question);
-      document.getElementById("answer-box").classList.remove("hidden");
-      document.getElementById("empty-state").classList.add("hidden");
-      setStatus("done");
+        <div class="text-2xl mb-1">📄</div>
+        <p class="text-xs truncate" style="color:#4ade80">${file.name}</p>
+        <p class="text-xs text-slate-500 mt-1">${resume.length} chars loaded</p>`;
+      document.getElementById("remove-resume").classList.remove("hidden");
     };
+    reader.readAsText(file);
+  });
+  document.getElementById("remove-resume").addEventListener("click", () => {
+    resume = "";
+    document.getElementById("upload-placeholder").innerHTML = `
+      <div class="text-2xl mb-2">⬆️</div>
+      <p class="text-sm text-slate-400">Upload <span style="color:#4ade80">.txt</span> resume</p>
+      <p class="text-xs text-slate-600 mt-1">for personalized answers</p>`;
+    document.getElementById("remove-resume").classList.add("hidden");
+  });
 
-    // ── Helpers ────────────────────────────────
-    function showTranscript(text) {
-      document.getElementById("transcript-text").textContent = text;
-      document.getElementById("transcript-box").classList.remove("hidden");
+  // Speech Recognition
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SR) {
+    recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+
+    recognition.onresult = (e) => {
+      let interim = "", final = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const t = e.results[i][0].transcript;
+        if (e.results[i].isFinal) final += t; else interim += t;
+      }
+      showTranscript(final || interim);
+      if (final) {
+        currentQuestion = final;
+        clearTimeout(silenceTimer);
+        silenceTimer = setTimeout(() => recognition.stop(), 1200);
+      }
+    };
+    recognition.onend = () => { stopMic(); if (currentQuestion) triggerAnswer(currentQuestion); };
+    recognition.onerror = (e) => { stopMic(); showError(e.error === "not-allowed" ? "Microphone access denied." : `Speech error: ${e.error}`); setStatus("error"); };
+  }
+
+  // Mic button
+  document.getElementById("mic-btn").addEventListener("click", () => {
+    if (!recognition) { showError("Speech recognition not supported. Use Chrome."); return; }
+    if (isListening) { recognition.stop(); return; }
+    currentQuestion = "";
+    document.getElementById("transcript-box").classList.add("hidden");
+    hideAnswer(); hideError();
+    setStatus("listening"); isListening = true; setWave(true);
+    document.getElementById("mic-btn").textContent = "⏹";
+    document.getElementById("mic-btn").style.background = "linear-gradient(135deg,#f59e0b,#ef4444)";
+    document.getElementById("mic-ring").classList.remove("hidden");
+    document.getElementById("mic-hint").textContent = "Speak your question...";
+    recognition.start();
+  });
+
+  function stopMic() {
+    isListening = false; setWave(false);
+    document.getElementById("mic-btn").textContent = "🎙";
+    document.getElementById("mic-btn").style.background = "linear-gradient(135deg,#4ade80,#22d3ee)";
+    document.getElementById("mic-ring").classList.add("hidden");
+    document.getElementById("mic-hint").textContent = "Click mic to start listening";
+  }
+
+  // Manual input
+  function handleManual() {
+    const q = document.getElementById("manual-q").value.trim();
+    if (q) triggerAnswer(q);
+  }
+  document.getElementById("manual-q").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleManual();
+  });
+
+  // ── MAIN FUNCTION: Get Answer from Server ──
+  async function triggerAnswer(question) {
+    if (!question.trim()) return;
+    hideError(); setStatus("thinking"); hideAnswer();
+    document.getElementById("thinking-box").classList.remove("hidden");
+    document.getElementById("empty-state").classList.add("hidden");
+
+    try {
+      const res = await fetch("/get-answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: question.trim(), resume }),
+      });
+
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error("Server returned invalid response. Check Railway logs.");
+      }
+
+      if (!res.ok) throw new Error(data.error || "Server error " + res.status);
+
+      document.getElementById("thinking-box").classList.add("hidden");
+      document.getElementById("answer-text").textContent = data.answer;
+      document.getElementById("answer-box").classList.remove("hidden");
+      document.getElementById("answer-box").scrollIntoView({ behavior: "smooth", block: "nearest" });
+      setStatus("done");
+
+      history.unshift({ question, answer: data.answer });
+      if (history.length > 10) history.pop();
+      renderHistory();
+
+    } catch (err) {
+      document.getElementById("thinking-box").classList.add("hidden");
+      showError(err.message);
+      setStatus("error");
     }
-    function hideAnswer() {
-      document.getElementById("answer-box").classList.add("hidden");
-    }
-    function showError(msg) {
-      document.getElementById("error-box").textContent = "⚠ " + msg;
-      document.getElementById("error-box").classList.remove("hidden");
-    }
-    function hideError() {
-      document.getElementById("error-box").classList.add("hidden");
-    }
-  </script>
+  }
+
+  // Copy
+  function copyAnswer() {
+    navigator.clipboard.writeText(document.getElementById("answer-text").textContent);
+  }
+
+  // History
+  function renderHistory() {
+    const panel = document.getElementById("history-panel");
+    const list  = document.getElementById("history-list");
+    if (!history.length) { panel.classList.add("hidden"); return; }
+    panel.classList.remove("hidden");
+    list.innerHTML = history.map((h, i) => `
+      <div onclick="loadHistory(${i})" style="border-left:2px solid #1e293b;padding-left:12px;cursor:pointer"
+        onmouseover="this.style.borderLeftColor='#4ade80'" onmouseout="this.style.borderLeftColor='#1e293b'">
+        <p class="text-xs text-slate-400 truncate">${h.question}</p>
+        <p class="text-xs text-slate-600 truncate mt-0.5">${h.answer}</p>
+      </div>`).join("");
+  }
+  window.loadHistory = (i) => {
+    const h = history[i];
+    document.getElementById("manual-q").value = h.question;
+    document.getElementById("answer-text").textContent = h.answer;
+    showTranscript(h.question);
+    document.getElementById("answer-box").classList.remove("hidden");
+    document.getElementById("empty-state").classList.add("hidden");
+    setStatus("done");
+  };
+
+  function showTranscript(text) {
+    document.getElementById("transcript-text").textContent = text;
+    document.getElementById("transcript-box").classList.remove("hidden");
+  }
+  function hideAnswer() { document.getElementById("answer-box").classList.add("hidden"); }
+  function showError(msg) {
+    document.getElementById("error-box").textContent = "⚠ " + msg;
+    document.getElementById("error-box").classList.remove("hidden");
+  }
+  function hideError() { document.getElementById("error-box").classList.add("hidden"); }
+</script>
 </body>
 </html>
