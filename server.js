@@ -6,48 +6,33 @@ require('dotenv').config();
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-// ─── STARTUP CHECK ────────────────────────────────────────────
-const API_KEY = process.env.ANTHROPIC_API_KEY;
-
-if (!API_KEY) {
-  console.error('❌ ERROR: ANTHROPIC_API_KEY is missing!');
-  console.error('Railway Variables mein ANTHROPIC_API_KEY add karo.');
-  process.exit(1);
-}
-
-console.log('✅ API Key found! Starting server...');
-
-// ─── MIDDLEWARE ───────────────────────────────────────────────
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
-// ─── HEALTH CHECK ─────────────────────────────────────────────
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
-
-// ─── MAIN API ─────────────────────────────────────────────────
+// ─── API ROUTE (must be BEFORE static files) ──────────────────
 app.post('/get-answer', async (req, res) => {
   const { question, resume } = req.body;
 
-  if (!question || question.trim() === '') {
+  const API_KEY = process.env.ANTHROPIC_API_KEY;
+  if (!API_KEY) {
+    return res.status(500).json({ error: 'API key missing. Add ANTHROPIC_API_KEY in Railway Variables.' });
+  }
+
+  if (!question || !question.trim()) {
     return res.status(400).json({ error: 'Question is required.' });
   }
 
   const resumeSection = resume && resume.trim()
-    ? `Resume:\n${resume.trim()}\n\n`
-    : '';
+    ? `\nResume:\n${resume.trim()}\n` : '';
 
   const prompt = `You are a professional interview assistant.
-Answer like a real, confident human candidate in an interview.
-Keep the answer short (3-5 sentences), clear, and professional.
+Answer like a real, confident human candidate.
+Keep the answer short (3-5 sentences), clear, professional.
 Do NOT use bullet points. Speak naturally.
+${resumeSection}
+Question: ${question.trim()}
 
-${resumeSection}Question:
-${question.trim()}
-
-Give a short, confident, and personalized answer.`;
+Give a short, confident answer.`;
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -58,41 +43,38 @@ Give a short, confident, and personalized answer.`;
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model:      'claude-opus-4-5',
+        model:      'claude-haiku-4-5-20251001',
         max_tokens: 500,
-        messages: [{ role: 'user', content: prompt }]
+        messages:   [{ role: 'user', content: prompt }]
       })
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      return res.status(502).json({
-        error: errData?.error?.message || 'Claude API error.'
-      });
+      return res.status(502).json({ error: data?.error?.message || 'Claude API error.' });
     }
 
-    const data   = await response.json();
     const answer = data?.content?.[0]?.text;
-
-    if (!answer) {
-      return res.status(502).json({ error: 'Empty response from Claude.' });
-    }
+    if (!answer) return res.status(502).json({ error: 'Empty response from Claude.' });
 
     console.log(`[Q]: ${question}`);
     return res.json({ answer });
 
   } catch (err) {
-    console.error('Server error:', err);
-    return res.status(500).json({ error: 'Server error. Try again.' });
+    console.error('Error:', err.message);
+    return res.status(500).json({ error: 'Server error. Please try again.' });
   }
 });
 
-// ─── FALLBACK ─────────────────────────────────────────────────
+// ─── STATIC FILES (after API route) ───────────────────────────
+app.use(express.static(__dirname));
+
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // ─── START ────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
