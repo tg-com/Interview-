@@ -1,52 +1,62 @@
-// ─────────────────────────────────────────────
-//  AI Interview Assistant — server.js
-//  Node.js + Express backend
-// ─────────────────────────────────────────────
-const express  = require("express");
-const cors     = require("cors");
+// ── UPDATED server.js (Safe Version) ──────────────────────────
+const express = require("express");
+const cors = require("cors");
 const Anthropic = require("@anthropic-ai/sdk");
 require("dotenv").config();
 
-const app    = express();
+const app = express();
+
+// API Key check (Server start hone se pehle check karega)
+if (!process.env.CLAUDE_API_KEY) {
+  console.error("❌ ERROR: CLAUDE_API_KEY is missing in .env file");
+  process.exit(1); 
+}
+
 const client = new Anthropic({ apiKey: process.env.CLAUDE_API_KEY });
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static("public")); // serves index.html
+app.use(express.static("public"));
 
-// ── POST /get-answer ──────────────────────────
 app.post("/get-answer", async (req, res) => {
-  const { question, resume } = req.body;
-
-  if (!question?.trim()) {
-    return res.status(400).json({ error: "Question is required." });
-  }
-
-  const systemPrompt = `You are a professional interview assistant helping a candidate answer interview questions naturally and confidently.
-Answer like a real human candidate — concise, direct, and genuine.
-Keep answers to 3–5 sentences. No bullet points. No headers. Just a natural spoken response.`;
-
-  const userPrompt = `${resume ? `Candidate Resume:\n${resume}\n\n` : ""}Question: ${question}
-
-Give a short, confident, natural answer as if speaking out loud.`;
-
   try {
+    const { question, resume } = req.body;
+
+    if (!question || question.trim() === "") {
+      return res.status(400).json({ error: "Sawal likhna zaroori hai!" });
+    }
+
+    const systemPrompt = `You are a professional interview assistant. 
+    Answer like a real human—concise (3-5 sentences), direct, and genuine. 
+    No bullets, no headers. Just natural speech.`;
+
+    const userPrompt = `${resume ? `Resume context: ${resume}\n\n` : ""}Question: ${question}`;
+
     const message = await client.messages.create({
-      model:      "claude-sonnet-4-20250514",
-      max_tokens: 1024,
-      system:     systemPrompt,
-      messages:   [{ role: "user", content: userPrompt }],
+      // FIXED: Model name updated to a valid one
+      model: "claude-3-5-sonnet-20240620", 
+      max_tokens: 500,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userPrompt }],
     });
 
-    const answer = message.content[0].text;
-    res.json({ answer });
+    // SAFE ACCESS: Agar API khali response de toh crash nahi hoga
+    if (message.content && message.content.length > 0) {
+      const answer = message.content[0].text;
+      res.json({ answer });
+    } else {
+      throw new Error("AI ne koi text response nahi diya.");
+    }
+
   } catch (err) {
-    console.error("Claude API error:", err.message);
-    res.status(500).json({ error: "Failed to get AI response. Check your API key." });
+    // Detailed logging for you, but simple message for the user
+    console.error("API Error Details:", err.message);
+    
+    res.status(500).json({ 
+      error: "Kuch galat ho gaya. Check karein: 1. API Key, 2. Internet, 3. Model Name." 
+    });
   }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () =>
-  console.log(`✅ Server running at http://localhost:${PORT}`)
-);
+app.listen(PORT, () => console.log(`🚀 Server active on port ${PORT}`));
